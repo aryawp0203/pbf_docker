@@ -8,7 +8,7 @@ Sebelum menjalankan proyek ini, pastikan Anda sudah menginstal:
 ## 📥 Clone Repository
 Jalankan perintah berikut untuk mengunduh proyek dari GitHub:
 ```sh
-git clone https://github.com/username/repository-name.git
+git clone https://github.com/abdau88/jobsheet1.git
 cd repository-name
 ```
 
@@ -25,3 +25,36 @@ cd repository-name
 
 ## 🎯 Akses Aplikasi
 - **Backend (CodeIgniter)**: [http://localhost:8000](http://localhost:8000)
+- **Frontend (Laravel)**: [http://localhost:3000](http://localhost:3000)
+- **PHPMyAdmin (Opsional)**: [http://localhost:8080](http://localhost:8080)
+
+## 🛠️ Konfigurasi Database
+- **Host**: `database`
+- **User**: `root`
+- **Password**: `root`
+- **Database Name**: `mydb`
+
+Jika ingin masuk ke MySQL dalam container:
+```sh
+docker exec -it nama_container_mysql mysql -u root -p
+```
+
+## 🔄 Update & Rebuild
+Jika ada perubahan dalam kode, jalankan:
+```sh
+git pull origin main
+docker-compose up -d --build
+```
+
+## 🛑 Stop & Remove Containers
+Jika ingin menghentikan layanan, jalankan:
+```sh
+docker-compose down
+```
+
+## 📝 Lisensi
+Proyek ini menggunakan lisensi **MIT**.
+
+---
+**📢 Catatan:** Jika ada kendala, silakan buat _issue_ di GitHub! 🚀
+
