@@ -51,10 +51,3 @@ Jika ingin menghentikan layanan, jalankan:
 ```sh
 docker-compose down
 ```
-
-## 📝 Lisensi
-Proyek ini menggunakan lisensi **MIT**.
-
----
-**📢 Catatan:** Jika ada kendala, silakan buat _issue_ di GitHub! 🚀
-
