@@ -1,0 +1,27 @@
+FROM php:8.1-fpm
+
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+    libicu-dev libpng-dev libjpeg-dev libfreetype6-dev zip unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql mysqli intl \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy project files (excluding via .dockerignore)
+COPY ./src /var/www
+
+# Ensure proper permissions
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+
+# Switch to non-root user
+USER www-data
+
+CMD ["php-fpm"]

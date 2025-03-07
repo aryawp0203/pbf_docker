@@ -1,0 +1,6 @@
+src/node_modules/
+src/vendor/
+.env
+.idea
+.vscode
+*.log
