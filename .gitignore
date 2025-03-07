@@ -1,4 +1,6 @@
-mysql_data/
+backend/node_modules/
 backend/vendor/
+backend/src/
 frontend/node_modules/
 frontend/vendor/
+frontend/src/
