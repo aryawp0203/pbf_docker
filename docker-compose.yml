@@ -41,7 +41,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile-php
     image: pbf/backend-php:latest
-    container_name: backend_php83
+    container_name: backend_php
     restart: always
     working_dir: /var/www
     volumes:
@@ -78,13 +78,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile-php
     image: pbf/frontend-php:latest
-    container_name: frontend_php81
+    container_name: frontend_php
     restart: always
     working_dir: /var/www
     volumes:
       - ./frontend/src:/var/www
     expose:
       - "9000"
+    command: ["php-fpm", "-F"]
     depends_on:
       - backend
     networks:
