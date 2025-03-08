@@ -40,7 +40,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile-php
-    image: pbf/backend-php:1.0
+    image: pbf/backend-php:latest
     container_name: backend_php83
     restart: always
     working_dir: /var/www
@@ -59,7 +59,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile-nginx
-    image: pbf/backend-nginx:1.0
+    image: pbf/backend-nginx:latest
     container_name: backend_nginx
     restart: always
     ports:
@@ -77,7 +77,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile-php
-    image: pbf/frontend-php:1.0
+    image: pbf/frontend-php:latest
     container_name: frontend_php81
     restart: always
     working_dir: /var/www
@@ -94,7 +94,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile-nginx
-    image: pbf/frontend-nginx:1.0
+    image: pbf/frontend-nginx:latest
     container_name: frontend_nginx
     restart: always
     ports:
