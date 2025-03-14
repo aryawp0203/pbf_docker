@@ -5,6 +5,8 @@ services:
     image: mysql:8.0
     container_name: mysql_host
     restart: always
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -13,105 +15,86 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - ./mysql_data:/var/lib/mysql # mysql_data:/var/lib/mysql (volume named Docker)
     networks:
-      - app_network
+      - app_network_2
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin_cpanel
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "9001:80"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
-      - app_network
+      - app_network_2
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile-php
-    image: pbf/backend-php:latest
-    container_name: backend_php
+      dockerfile: Dockerfile
+    image: pbf/backend:latest
+    container_name: backend_ci
     restart: always
     working_dir: /var/www
     volumes:
       - ./backend/src:/var/www
     expose:
-      - "9000"
-    command: ["php-fpm", "-F"]
+      - "9000" # PHP-FPM hanya untuk komunikasi internal
     depends_on:
       mysql:
         condition: service_healthy
     networks:
-      - app_network
+      - app_network_2
 
   backend_nginx:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile-nginx
-    image: pbf/backend-nginx:latest
-    container_name: backend_nginx
+    image: nginx:latest
+    container_name: backend_server
     restart: always
-    ports:
-      - "8080:80"
-    depends_on:
-      - backend
     volumes:
       - ./backend/src:/var/www
       - ./backend/nginx:/etc/nginx/conf.d/
-    command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - "8080:80" # Nginx membuka akses ke luar
+    depends_on:
+      - backend
     networks:
-      - app_network
+      - app_network_2
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile-php
-    image: pbf/frontend-php:latest
-    container_name: frontend_php
+      dockerfile: Dockerfile
+    image: pbf/frontend:latest
+    container_name: frontend_laravel
     restart: always
     working_dir: /var/www
     volumes:
       - ./frontend/src:/var/www
-    expose:
-      - "9000"
-    command: ["php-fpm", "-F"]
-    depends_on:
-      - backend
-    networks:
-      - app_network
-
-  frontend_nginx:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile-nginx
-    image: pbf/frontend-nginx:latest
-    container_name: frontend_nginx
-    restart: always
+      - ./frontend/nginx:/etc/nginx/conf.d/
     ports:
       - "3000:80"
     depends_on:
-      - frontend
-    volumes:
-      - ./frontend/src:/var/www
-      - ./frontend/nginx:/etc/nginx/conf.d/
-    command: ["nginx", "-g", "daemon off;"]
+      - backend
     networks:
-      - app_network
+      - app_network_2
 
 volumes:
   mysql_data:
 
+
 networks:
-  app_network:
+  app_network_2:
     driver: bridge
