@@ -53,10 +53,12 @@ if not exist "%FRONTEND_DIR%" (
 
     echo Installing dependencies...
     composer install
+    echo composer install completed.
 
     :: Pastikan file artisan ada sebelum menjalankan perintah artisan
     if exist artisan (
-        php artisan key:generate
+        echo Running Artisan key:generate...
+        php artisan key:generate || echo Error: Failed to run php artisan key:generate!
     ) else (
         echo Error: Laravel artisan file not found! Skipping key generation.
     )
@@ -69,7 +71,18 @@ if not exist "%FRONTEND_DIR%" (
     echo Frontend repository already exists. Skipping clone.
 )
 
+:: Cek apakah Docker tersedia
+docker --version >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: Docker tidak ditemukan atau tidak berjalan!
+    exit /b 1
+)
+
 :: Jalankan Docker Compose
 echo Starting Docker Compose...
 docker compose up -d --build
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: Failed to start Docker Compose!
+    exit /b 1
+)
 echo Docker Compose started successfully.
